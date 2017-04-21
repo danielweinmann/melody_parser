@@ -29,17 +29,28 @@ class Note(object):
         return round(pow(2, (float(octave * 12 + index) / 12.0)) * cls.C0, 2)
 
     @classmethod
-    def distinct(cls, notes, minimum_duration = 0.02):
+    def distinct(cls, notes, ending_time, minimum_duration = 0.02):
         distinct_notes = []
-        last_note = None
+        last_name = None
         for note in notes:
-            if last_note != note.name:
+            if last_name != note.name:
                 distinct_notes += [Note(start=note.start, name=note.name)]
-                last_note = note.name
+                last_name = note.name
+        last_note = notes[len(notes) - 1]
         for index, note in enumerate(distinct_notes):
             if index < len(distinct_notes) - 1:
                 duration = distinct_notes[index + 1].start - note.start
             else:
-                duration = notes[len(notes) - 1].start - note.start
+                duration = ending_time - note.start
             note.duration = duration
-        return [note for note in distinct_notes if note.duration > minimum_duration]
+        distinct_notes = [note for note in distinct_notes if note.duration > minimum_duration]
+        last_name = None
+        for note in distinct_notes:
+            if last_name == note.name:
+                return cls.distinct(distinct_notes, ending_time)
+            else:
+                last_name = note.name
+        if distinct_notes[len(distinct_notes) - 1].name == None:
+            return distinct_notes[0:len(distinct_notes) - 1]
+        else:
+            return distinct_notes

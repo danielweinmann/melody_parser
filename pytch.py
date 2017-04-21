@@ -30,8 +30,8 @@ def index():
         pitches += [Note(start=start, frequency=frequency)]
         total_frames += read
         if read < hop_size: break
-
-    notes = Note.distinct(pitches)
+    ending_time = total_frames / float(samplerate)
+    notes = Note.distinct(notes=pitches, ending_time=ending_time)
 
     return dict(pitches=pitches, notes=notes)
 
