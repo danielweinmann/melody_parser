@@ -1,11 +1,11 @@
 import os
-# import json
-# import urllib
+import json
+import urllib
 from dotenv import load_dotenv, find_dotenv
-from bottle import route, view, template, request, response, run
-# from aubio import source, pitch, notes, miditofreq
-# from melody import Melody
-# from note import Note
+from bottle import route, view, request, response, run
+from aubio import source, pitch, notes, miditofreq
+from melody import Melody
+from note import Note
 
 env = os.environ.get('ENV', 'development')
 if env == 'development':
@@ -15,7 +15,6 @@ if env == 'development':
 @view('melody')
 def index():
     url = request.query.get('url')
-    return template('<p>URL => {{url}}</p>', url=url)
     filename = os.path.join(os.path.dirname(__file__), 'tmp/tmp.wav')
     urllib.urlretrieve(url, filename)
     downsample = int(os.environ.get('DOWNSAMPLE', 1))
@@ -41,4 +40,4 @@ def index():
     melody = Melody(pitches=pitches, ending_time=ending_time)
     response.content_type = 'application/json'
     return dict(melody=melody)
-run(host=os.environ.get('HOST', 'localhost'), port=int(os.environ.get('PORT', 8080)), reloader=(os.environ.get('RELOADER', 'False') == 'True'))
+run(host=os.environ.get('HOST', '0.0.0.0'), port=int(os.environ.get('PORT', 8080)), reloader=(os.environ.get('RELOADER', 'False') == 'True'))
