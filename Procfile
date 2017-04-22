@@ -1,1 +1,1 @@
-web: python ./melody_parser.py $PORT
+web: python ./melody_parser.py
