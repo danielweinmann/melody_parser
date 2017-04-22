@@ -29,7 +29,7 @@ class Note(object):
         return round(pow(2, (float(octave * 12 + index) / 12.0)) * cls.C0, 2)
 
     @classmethod
-    def distinct(cls, notes, ending_time, minimum_duration = 0.02):
+    def distinct(cls, notes, ending_time, minimum_duration = 0.05):
         distinct_notes = []
         last_name = None
         for note in notes:
