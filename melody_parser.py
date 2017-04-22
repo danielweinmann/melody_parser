@@ -1,11 +1,11 @@
 import os
-import json
-import urllib
+# import json
+# import urllib
 from dotenv import load_dotenv, find_dotenv
 from bottle import route, view, template, request, response, run
-from aubio import source, pitch, notes, miditofreq
-from melody import Melody
-from note import Note
+# from aubio import source, pitch, notes, miditofreq
+# from melody import Melody
+# from note import Note
 
 env = os.environ.get('ENV', 'development')
 if env == 'development':
