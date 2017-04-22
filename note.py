@@ -1,3 +1,4 @@
+import re
 from math import log, pow
 
 class Note(object):
@@ -26,8 +27,10 @@ class Note(object):
     def frequency_by_name(cls, name):
         if name == None:
             return None
-        index = cls.names.index(name[0:len(name)-1])
-        octave = int(name[len(name)-1:])
+        expression = re.compile('(\D+)(\d+)')
+        results = expression.search(name)
+        index = cls.names.index(results.group(1))
+        octave = int(results.group(2))
         return round(pow(2, (float(octave * 12 + index) / 12.0)) * cls.C0, 2)
 
     @classmethod
