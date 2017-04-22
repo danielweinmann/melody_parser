@@ -8,6 +8,8 @@ class Note(object):
     def __init__(self, start = 0.0, frequency = None, name = None, duration = None):
         self.start = start
         self.frequency = frequency if frequency != None else self.__class__.frequency_by_name(name)
+        if self.frequency <= 0:
+            self.frequency = None
         self.duration = duration
         self.name = name if name != None else self.__class__.name(frequency)
 

@@ -1,17 +1,24 @@
+import os
 import json
-from bottle import route, view, response, run
+import urllib
+from dotenv import load_dotenv, find_dotenv
+from bottle import route, view, request, response, run
 from melody import Melody
 from note import Note
+
+load_dotenv(find_dotenv())
 
 @route('/')
 @view('melody')
 def index():
     from aubio import source, pitch, notes, miditofreq
-    filename = "/Users/danielweinmann/Desktop/piano.wav"
-    downsample = 1
-    samplerate = 44100 // downsample
-    fft_size = 512 // downsample # fft size
-    hop_size = 256  // downsample # hop size
+    url = request.query.get('url')
+    filename = os.path.join(os.path.dirname(__file__), 'tmp/tmp.wav')
+    urllib.urlretrieve(url, filename)
+    downsample = int(os.environ.get('DOWNSAMPLE', 1))
+    samplerate = int(os.environ.get('SAMPLERATE', 44100)) // downsample
+    fft_size = int(os.environ.get('FTT_SIZE', 512)) // downsample
+    hop_size = int(os.environ.get('HOP_SIZE', 256))  // downsample
     source_file = source(filename, samplerate, hop_size)
     samplerate = source_file.samplerate
     tolerance = 0.8
@@ -31,4 +38,4 @@ def index():
     melody = Melody(pitches=pitches, ending_time=ending_time)
     response.content_type = 'application/json'
     return dict(melody=melody)
-run(host='localhost', port=8080, reloader=True)
+run(host=os.environ.get('HOST', 'localhost'), port=int(os.environ.get('PORT', 8080)), reloader=(os.environ.get('RELOADER', 'False') == 'True'))
