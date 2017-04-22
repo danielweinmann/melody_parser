@@ -6,7 +6,8 @@ from bottle import route, view, request, response, run
 from melody import Melody
 from note import Note
 
-load_dotenv(find_dotenv())
+if os.environ.get('ENV', 'development') == 'development':
+    load_dotenv(find_dotenv())
 
 @route('/')
 @view('melody')
