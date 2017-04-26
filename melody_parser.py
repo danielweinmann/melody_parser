@@ -1,6 +1,8 @@
 import os
 import json
 import urllib
+import time
+from random import randint
 from dotenv import load_dotenv, find_dotenv
 from bottle import route, view, request, response, run
 from aubio import source, pitch, notes, miditofreq
@@ -11,12 +13,13 @@ env = os.environ.get('ENV', 'development')
 if env == 'development':
     load_dotenv(find_dotenv())
 
-@route('/')
+@route('/', method='POST')
 @view('melody')
 def index():
-    url = request.query.get('url')
-    filename = os.path.join(os.path.dirname(__file__), 'tmp/tmp.wav')
-    urllib.urlretrieve(url, filename)
+    file = request.files.get('file')
+    name, extension = os.path.splitext(file.filename)
+    filename = os.path.join(os.path.dirname(__file__), 'tmp/' + time.strftime("%Y%m%d%H%M%S") + '_' + str(randint(1000000,9999999)) + '_' + name + extension)
+    file.save(filename)
     downsample = int(os.environ.get('DOWNSAMPLE', 1))
     samplerate = int(os.environ.get('SAMPLERATE', 44100)) // downsample
     fft_size = int(os.environ.get('FTT_SIZE', 512)) // downsample
